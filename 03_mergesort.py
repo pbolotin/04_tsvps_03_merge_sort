@@ -80,6 +80,57 @@ def bubble_sort_enum_list_and_comment_steps(enum_list, order="a"):
                 enum_list[rev_step] = swap
                 
     eprint("RESULT:", [t[0] for t in enum_list])
+    
+def merge_sort_enum_list_and_comment_steps(enum_list, order="a"):
+    def merge_two_lists(list_one, list_two):
+        merged_list = []
+        while True:
+            if list_one[0][1] > list_two[0][1]:
+                el = list_two.pop(0)
+                merged_list.append(el)
+                if len(list_two) == 0:
+                    merged_list += list_one
+                    break
+            else:
+                el = list_one.pop(0)
+                merged_list.append(el)
+                if len(list_one) == 0:
+                    merged_list += list_two
+                    break
+        eprint(*[t[0] for t in merged_list],"|",end = "")
+        return merged_list
+
+    limit = len(enum_list)
+        
+    size_of_part = 1
+    while size_of_part < limit:
+        iter = 0
+        while True:
+            part_one_start_idx = iter * size_of_part
+            if part_one_start_idx >= limit:
+                break
+            
+            part_one_end_idx = (iter + 1) * size_of_part
+            if part_one_end_idx >= limit:
+                break
+                
+            part_two_start_idx = (iter + 1) * size_of_part
+            if part_two_start_idx >= limit:
+                break
+            
+            part_two_end_idx = (iter + 2) * size_of_part
+            if part_two_end_idx >= limit:
+                part_two_end_idx = limit
+            
+            enum_list[part_one_start_idx:part_two_end_idx] = merge_two_lists(enum_list[part_one_start_idx:part_one_end_idx], enum_list[part_two_start_idx:part_two_end_idx])
+            
+            iter += 2
+            
+        size_of_part *= 2
+        eprint("END\n")
+
+    if order != "a": enum_list.reverse()
+    eprint("RESULT:", [t[0] for t in enum_list])
 
 def output_result(enum_list):
     for n, s in enum_list:
@@ -91,8 +142,8 @@ def output_result(enum_list):
 
 def load_config_json():
     cfg = None
-    if check_file("02_bubblesort_cfg.json"):
-        f = open("02_bubblesort_cfg.json", "r")
+    if check_file("03_mergesort_cfg.json"):
+        f = open("03_mergesort_cfg.json", "r")
         cfg = json.load(f)
         f.close()
     else: #defaul config
@@ -100,7 +151,7 @@ def load_config_json():
     return cfg
     
 if __name__ == "__main__":
-    eprint("02_bubblesort")
+    eprint("03_mergesort")
     if not arguments_validation():
         print_help()
         exit()
@@ -113,5 +164,6 @@ if __name__ == "__main__":
     enm_lst = read_file_into_enum_list(sys.argv[1])
     show_input(enm_lst)
     #selection_sort_enum_list_and_comment_steps(enm_lst, cfg["SortDirection"])
-    bubble_sort_enum_list_and_comment_steps(enm_lst, cfg["SortDirection"])
+    #bubble_sort_enum_list_and_comment_steps(enm_lst, cfg["SortDirection"])
+    merge_sort_enum_list_and_comment_steps(enm_lst, cfg["SortDirection"])
     output_result(enm_lst)
